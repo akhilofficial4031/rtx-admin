@@ -1,0 +1,1 @@
+ALTER TABLE "projects" ADD COLUMN "poc_phone" varchar(255);
