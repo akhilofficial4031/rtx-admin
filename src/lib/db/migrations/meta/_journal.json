@@ -15,6 +15,13 @@
       "when": 1746077944367,
       "tag": "0001_dashing_mandroid",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1746078991294,
+      "tag": "0002_acoustic_rafael_vega",
+      "breakpoints": true
     }
   ]
 }

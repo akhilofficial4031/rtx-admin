@@ -3,6 +3,32 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Primary colors */
+  --primary-main: #e53e3e;
+  --primary-light: #fc8181;
+  --primary-dark: #c53030;
+
+  /* Secondary colors */
+  --secondary-main: #718096;
+  --secondary-light: #a0aec0;
+  --secondary-dark: #4a5568;
+
+  /* Background colors */
+  --background-main: #f7fafc;
+  --background-paper: #ffffff;
+
+  /* Text colors */
+  --text-primary: #1a202c;
+  --text-secondary: #4a5568;
+  --text-disabled: #a0aec0;
+
+  /* Utility colors */
+  --error: #f56565;
+  --warning: #ed8936;
+  --info: #4299e1;
+  --success: #48bb78;
+  --divider: #e2e8f0;
 }
 
 @theme inline {
@@ -12,10 +38,29 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+
+    /* Adapt primary colors for dark theme */
+    --primary-main: #f56565;
+    --primary-light: #fc8181;
+    --primary-dark: #c53030;
+
+    /* Adapt secondary colors for dark theme */
+    --secondary-main: #a0aec0;
+    --secondary-light: #cbd5e0;
+    --secondary-dark: #718096;
+
+    /* Adapt background colors for dark theme */
+    --background-main: #1a202c;
+    --background-paper: #2d3748;
+
+    /* Adapt text colors for dark theme */
+    --text-primary: #f7fafc;
+    --text-secondary: #e2e8f0;
+    --text-disabled: #718096;
   }
 }
 
