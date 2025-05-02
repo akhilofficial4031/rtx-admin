@@ -139,7 +139,7 @@ export default function Header({ isSidebarOpen, toggleSidebar }: HeaderProps) {
           </svg>
         </button>
 
-        <button className="relative text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md p-1">
+        {/* <button className="relative text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md p-1">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
@@ -155,28 +155,37 @@ export default function Header({ isSidebarOpen, toggleSidebar }: HeaderProps) {
             />
           </svg>
           <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-        </button>
+        </button> */}
 
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={toggleProfileDropdown}
-            className="flex items-center focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md p-1"
+            className="flex items-center focus:outline-none rounded-md p-1"
             aria-expanded={isProfileDropdownOpen}
             aria-haspopup="true"
           >
             <span className="mr-2 text-sm text-gray-700 hidden md:block">
               {user?.name || "User"}
             </span>
-            <img
-              className="h-8 w-8 rounded-full object-cover"
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-              alt={`${user?.name || "User"} profile`}
-            />
+            <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
           </button>
 
           {isProfileDropdownOpen && (
             <div
-              className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
+              className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white  focus:outline-none z-10"
               role="menu"
               aria-orientation="vertical"
               tabIndex={-1}

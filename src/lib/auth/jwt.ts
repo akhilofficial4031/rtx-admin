@@ -1,7 +1,8 @@
 import { createHash, createHmac } from "crypto";
+import { env } from "@/lib/env";
 
-// Secret key for JWT - in production, use environment variable
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
+// Secret key for JWT - use from environment variable
+const JWT_SECRET = env.JWT_SECRET;
 
 interface JwtPayload {
   id: string;

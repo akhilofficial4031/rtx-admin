@@ -197,7 +197,7 @@ export default function MeetingsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8 space-y-8">
+    <div className="max-w-7xl mx-auto space-y-8">
       {/* Header wrapper with background */}
       <div className="bg-white rounded-lg shadow-sm p-5 border border-slate-200">
         {/* Page header with title, view toggles, and actions */}

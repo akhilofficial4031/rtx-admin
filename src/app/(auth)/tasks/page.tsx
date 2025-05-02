@@ -1,20 +1,25 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Calendar, ClipboardCheck, Clock, Loader2 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { formatDate } from "@/lib/utils";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  CalendarDays,
+  Clock,
+  Loader2,
+  ArrowUpDown,
+  MoreHorizontal,
+  Check,
+} from "lucide-react";
+import { formatDate } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useToast } from "@/components/ui/use-toast";
 
 // Task interface
 interface Task {
@@ -57,64 +62,117 @@ const StatusBadge = ({ status }: { status: string }) => {
   );
 };
 
-// Task card component
-const TaskCard = ({ task }: { task: Task }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -20 }}
-    className="h-full"
-  >
-    <Card className="h-full flex flex-col border-slate-200 shadow-sm hover:shadow-md transition-all duration-300">
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between mb-1">
-          <div className="flex items-center gap-2 text-sm text-slate-500">
-            <Calendar size={14} />
-            <span>
-              {task.dueDate ? formatDate(task.dueDate) : "No due date"}
-            </span>
-          </div>
-          <StatusBadge status={task.status} />
-        </div>
-        <CardTitle className="text-lg font-semibold">{task.name}</CardTitle>
-        {task.assigneeName && (
-          <CardDescription className="text-sm mt-1">
-            Assigned to: {task.assigneeName}
-          </CardDescription>
-        )}
-      </CardHeader>
+// Status change menu component
+const StatusChangeMenu = ({
+  task,
+  onStatusChange,
+  loadingTaskId,
+}: {
+  task: Task;
+  onStatusChange: (taskId: string, newStatus: string) => void;
+  loadingTaskId: string | null;
+}) => {
+  const isLoading = loadingTaskId === task.id;
 
-      <CardContent className="py-2 flex-grow">
-        {task.description ? (
-          <p className="text-sm text-slate-600">{task.description}</p>
-        ) : (
-          <p className="text-sm text-slate-400 italic">No description</p>
-        )}
-      </CardContent>
+  const getMenuItems = () => {
+    if (isLoading) {
+      return (
+        <DropdownMenuItem disabled className="flex items-center justify-center">
+          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+          Updating...
+        </DropdownMenuItem>
+      );
+    }
 
-      {task.meetingId && (
-        <CardFooter className="pt-2 pb-3 text-xs text-slate-500">
-          <div className="flex items-center gap-1">
-            <ClipboardCheck size={14} />
-            <span>From meeting</span>
-          </div>
-        </CardFooter>
-      )}
-    </Card>
-  </motion.div>
-);
+    switch (task.status) {
+      case "not_started":
+        return (
+          <>
+            <DropdownMenuItem
+              onClick={() => onStatusChange(task.id, "in_progress")}
+            >
+              <div className="flex items-center">
+                <span className="bg-blue-100 p-1 rounded mr-2">
+                  <Clock size={16} className="text-blue-600" />
+                </span>
+                Mark as In Progress
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => onStatusChange(task.id, "completed")}
+            >
+              <div className="flex items-center">
+                <span className="bg-green-100 p-1 rounded mr-2">
+                  <Check size={16} className="text-green-600" />
+                </span>
+                Mark as Completed
+              </div>
+            </DropdownMenuItem>
+          </>
+        );
+      case "in_progress":
+        return (
+          <DropdownMenuItem
+            onClick={() => onStatusChange(task.id, "completed")}
+          >
+            <div className="flex items-center">
+              <span className="bg-green-100 p-1 rounded mr-2">
+                <Check size={16} className="text-green-600" />
+              </span>
+              Mark as Completed
+            </div>
+          </DropdownMenuItem>
+        );
+      case "completed":
+      default:
+        return (
+          <DropdownMenuItem disabled className="text-slate-400">
+            No actions available
+          </DropdownMenuItem>
+        );
+    }
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 w-8 p-0"
+          disabled={isLoading}
+        >
+          <span className="sr-only">Open menu</span>
+          {isLoading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <MoreHorizontal className="h-4 w-4" />
+          )}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">{getMenuItems()}</DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
 // Tasks empty state component
 const TasksEmptyState = () => (
-  <div className="p-8 text-center">
-    <div className="mx-auto w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-3">
-      <Clock className="h-6 w-6 text-slate-400" />
-    </div>
-    <h3 className="text-lg font-medium text-slate-900 mb-1">No tasks due</h3>
-    <p className="text-sm text-slate-500 max-w-sm mx-auto">
-      There are no tasks due within this timeframe.
-    </p>
-  </div>
+  <tr>
+    <td
+      colSpan={5}
+      className="px-6 py-16 text-center text-slate-500 bg-slate-50/50"
+    >
+      <div className="flex flex-col items-center">
+        <div className="bg-white p-4 rounded-full shadow-md mb-4">
+          <Clock className="h-12 w-12 text-slate-400" />
+        </div>
+        <p className="text-lg font-medium mb-1 text-slate-700">No tasks due</p>
+        <p className="text-sm text-slate-500 mb-4">
+          There are no tasks due within this timeframe.
+        </p>
+      </div>
+    </td>
+  </tr>
 );
 
 // Main tasks page component
@@ -133,6 +191,8 @@ export default function TasksPage() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [loadingTaskId, setLoadingTaskId] = useState<string | null>(null);
+  const { toast } = useToast();
 
   // Fetch tasks
   useEffect(() => {
@@ -157,13 +217,130 @@ export default function TasksPage() {
     fetchTasks();
   }, []);
 
+  // Helper to get status label
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "not_started":
+        return "Not Started";
+      case "in_progress":
+        return "In Progress";
+      case "completed":
+        return "Completed";
+      default:
+        return status;
+    }
+  };
+
+  // Change task status handler
+  const handleStatusChange = async (taskId: string, newStatus: string) => {
+    setLoadingTaskId(taskId);
+    try {
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      // Get the task name
+      let taskName = "";
+      Object.keys(tasks).forEach((key) => {
+        const tabKey = key as keyof typeof tasks;
+        const task = tasks[tabKey].find((t) => t.id === taskId);
+        if (task) {
+          taskName = task.name;
+        }
+      });
+
+      // Update local state to reflect the status change
+      const updatedTasks = { ...tasks };
+
+      // Update task in all tabs
+      Object.keys(updatedTasks).forEach((key) => {
+        const tabKey = key as keyof typeof tasks;
+        const tabTasks = updatedTasks[tabKey];
+
+        const updatedTabTasks = tabTasks.map((task) =>
+          task.id === taskId ? { ...task, status: newStatus } : task
+        );
+
+        updatedTasks[tabKey] = updatedTabTasks;
+      });
+
+      setTasks(updatedTasks);
+
+      // Show success toast
+      toast({
+        variant: "success",
+        title: "Task status updated",
+        description: `"${taskName}" is now ${getStatusLabel(newStatus)}`,
+      });
+    } catch (err) {
+      console.error("Failed to update task status:", err);
+      toast({
+        variant: "destructive",
+        title: "Failed to update status",
+        description: "There was an error updating the task status.",
+      });
+    } finally {
+      setLoadingTaskId(null);
+    }
+  };
+
   // Get tab count
   const getTabCount = (key: keyof typeof tasks) => {
     return tasks[key]?.length || 0;
   };
 
+  // Render a table row with status change menu
+  const renderTaskRow = (task: Task) => (
+    <tr
+      key={task.id}
+      className="hover:bg-slate-50 transition-colors duration-200"
+    >
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="text-sm font-medium text-slate-800">{task.name}</div>
+        {task.description && (
+          <div className="text-xs text-slate-500 mt-1">
+            {task.description.length > 50
+              ? `${task.description.substring(0, 50)}...`
+              : task.description}
+          </div>
+        )}
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="text-sm text-slate-600">
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200 shadow-sm">
+            <CalendarDays size={12} className="mr-1" />
+            {task.dueDate ? formatDate(task.dueDate) : "No due date"}
+          </span>
+        </div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <StatusBadge status={task.status} />
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="text-sm text-slate-600">
+          {task.assigneeName || "Unassigned"}
+        </div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+        <StatusChangeMenu
+          task={task}
+          onStatusChange={handleStatusChange}
+          loadingTaskId={loadingTaskId}
+        />
+      </td>
+    </tr>
+  );
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8 space-y-8">
+    <div className="max-w-7xl mx-auto space-y-8">
       {/* Header wrapper with background */}
       <div className="bg-white rounded-lg shadow-sm p-5 border border-slate-200">
         {/* Page header with title */}
@@ -241,66 +418,298 @@ export default function TasksPage() {
             </div>
 
             <TabsContent value="today">
-              <div className="p-4">
-                {tasks.today && tasks.today.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <AnimatePresence>
-                      {tasks.today.map((task) => (
-                        <TaskCard key={task.id} task={task} />
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                ) : (
-                  <TasksEmptyState />
-                )}
+              <div className="overflow-x-auto">
+                <div className="min-w-[800px]">
+                  <table className="w-full divide-y divide-slate-200">
+                    <thead className="bg-gradient-to-r from-slate-50 to-white">
+                      <tr>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                        >
+                          <div className="flex items-center">
+                            Task Name
+                            <ArrowUpDown
+                              size={14}
+                              className="ml-1 text-slate-500"
+                            />
+                          </div>
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                        >
+                          <div className="flex items-center">
+                            Due Date
+                            <ArrowUpDown
+                              size={14}
+                              className="ml-1 text-slate-500"
+                            />
+                          </div>
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                        >
+                          <div className="flex items-center">
+                            Status
+                            <ArrowUpDown
+                              size={14}
+                              className="ml-1 text-slate-500"
+                            />
+                          </div>
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                        >
+                          <div className="flex items-center">
+                            Assignee
+                            <ArrowUpDown
+                              size={14}
+                              className="ml-1 text-slate-500"
+                            />
+                          </div>
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                        >
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-slate-200">
+                      {tasks.today && tasks.today.length > 0 ? (
+                        tasks.today.map(renderTaskRow)
+                      ) : (
+                        <TasksEmptyState />
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </TabsContent>
 
             <TabsContent value="day1">
-              <div className="p-4">
-                {tasks.day1 && tasks.day1.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <AnimatePresence>
-                      {tasks.day1.map((task) => (
-                        <TaskCard key={task.id} task={task} />
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                ) : (
-                  <TasksEmptyState />
-                )}
+              <div className="overflow-x-auto">
+                <div className="min-w-[800px]">
+                  <table className="w-full divide-y divide-slate-200">
+                    <thead className="bg-gradient-to-r from-slate-50 to-white">
+                      <tr>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                        >
+                          <div className="flex items-center">
+                            Task Name
+                            <ArrowUpDown
+                              size={14}
+                              className="ml-1 text-slate-500"
+                            />
+                          </div>
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                        >
+                          <div className="flex items-center">
+                            Due Date
+                            <ArrowUpDown
+                              size={14}
+                              className="ml-1 text-slate-500"
+                            />
+                          </div>
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                        >
+                          <div className="flex items-center">
+                            Status
+                            <ArrowUpDown
+                              size={14}
+                              className="ml-1 text-slate-500"
+                            />
+                          </div>
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                        >
+                          <div className="flex items-center">
+                            Assignee
+                            <ArrowUpDown
+                              size={14}
+                              className="ml-1 text-slate-500"
+                            />
+                          </div>
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                        >
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-slate-200">
+                      {tasks.day1 && tasks.day1.length > 0 ? (
+                        tasks.day1.map(renderTaskRow)
+                      ) : (
+                        <TasksEmptyState />
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </TabsContent>
 
             <TabsContent value="day2">
-              <div className="p-4">
-                {tasks.day2 && tasks.day2.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <AnimatePresence>
-                      {tasks.day2.map((task) => (
-                        <TaskCard key={task.id} task={task} />
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                ) : (
-                  <TasksEmptyState />
-                )}
+              <div className="overflow-x-auto">
+                <div className="min-w-[800px]">
+                  <table className="w-full divide-y divide-slate-200">
+                    <thead className="bg-gradient-to-r from-slate-50 to-white">
+                      <tr>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                        >
+                          <div className="flex items-center">
+                            Task Name
+                            <ArrowUpDown
+                              size={14}
+                              className="ml-1 text-slate-500"
+                            />
+                          </div>
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                        >
+                          <div className="flex items-center">
+                            Due Date
+                            <ArrowUpDown
+                              size={14}
+                              className="ml-1 text-slate-500"
+                            />
+                          </div>
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                        >
+                          <div className="flex items-center">
+                            Status
+                            <ArrowUpDown
+                              size={14}
+                              className="ml-1 text-slate-500"
+                            />
+                          </div>
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                        >
+                          <div className="flex items-center">
+                            Assignee
+                            <ArrowUpDown
+                              size={14}
+                              className="ml-1 text-slate-500"
+                            />
+                          </div>
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                        >
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-slate-200">
+                      {tasks.day2 && tasks.day2.length > 0 ? (
+                        tasks.day2.map(renderTaskRow)
+                      ) : (
+                        <TasksEmptyState />
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </TabsContent>
 
             <TabsContent value="day3">
-              <div className="p-4">
-                {tasks.day3 && tasks.day3.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <AnimatePresence>
-                      {tasks.day3.map((task) => (
-                        <TaskCard key={task.id} task={task} />
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                ) : (
-                  <TasksEmptyState />
-                )}
+              <div className="overflow-x-auto">
+                <div className="min-w-[800px]">
+                  <table className="w-full divide-y divide-slate-200">
+                    <thead className="bg-gradient-to-r from-slate-50 to-white">
+                      <tr>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                        >
+                          <div className="flex items-center">
+                            Task Name
+                            <ArrowUpDown
+                              size={14}
+                              className="ml-1 text-slate-500"
+                            />
+                          </div>
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                        >
+                          <div className="flex items-center">
+                            Due Date
+                            <ArrowUpDown
+                              size={14}
+                              className="ml-1 text-slate-500"
+                            />
+                          </div>
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                        >
+                          <div className="flex items-center">
+                            Status
+                            <ArrowUpDown
+                              size={14}
+                              className="ml-1 text-slate-500"
+                            />
+                          </div>
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                        >
+                          <div className="flex items-center">
+                            Assignee
+                            <ArrowUpDown
+                              size={14}
+                              className="ml-1 text-slate-500"
+                            />
+                          </div>
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                        >
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-slate-200">
+                      {tasks.day3 && tasks.day3.length > 0 ? (
+                        tasks.day3.map(renderTaskRow)
+                      ) : (
+                        <TasksEmptyState />
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </TabsContent>
           </Tabs>

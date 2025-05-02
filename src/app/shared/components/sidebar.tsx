@@ -74,7 +74,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
     },
     {
       name: "Projects",
-      path: "/projects",
+      path: "",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -92,7 +92,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
     },
     {
       name: "Employees",
-      path: "/employees",
+      path: "",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -176,17 +176,44 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
     }
   };
 
+  // Function to stop propagation when clicking inside the sidebar
+  const handleSidebarClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
   return (
     <>
       <aside
-        className={`fixed md:sticky top-0 left-0 h-screen md:h-screen w-64 bg-white border-r border-gray-200 flex flex-col transition-transform duration-300 ease-in-out z-40 md:translate-x-0 ${
+        className={`fixed md:sticky top-0 left-0 h-screen md:h-screen w-full max-w-[280px] md:w-64 bg-white border-r border-gray-200 flex flex-col transition-transform duration-300 ease-in-out z-40 md:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
+        onClick={handleSidebarClick}
       >
-        <div className="h-16 flex items-center px-4 border-b border-gray-200">
+        <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200">
           <Link href="/dashboard" className="flex items-center">
             <Image src="/logo.png" alt="logo" width={200} height={200} />
           </Link>
+          {/* Close button for mobile */}
+          <button
+            className="md:hidden text-gray-500 hover:text-gray-700 focus:outline-none"
+            onClick={toggleSidebar}
+            aria-label="Close menu"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
         </div>
 
         <div className="flex-1 overflow-y-auto py-4 px-3">
@@ -261,9 +288,9 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
       </aside>
 
       {/* Mobile overlay to close sidebar when clicked outside */}
-      {isOpen && window.innerWidth < 768 && (
+      {isOpen && (
         <div
-          className="md:hidden fixed inset-0 bg-gray-800 bg-opacity-50 z-30"
+          className="md:hidden fixed inset-0 bg-transparent z-30"
           onClick={toggleSidebar}
           aria-hidden="true"
         ></div>

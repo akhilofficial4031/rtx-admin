@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { colors } from "@/lib/colors";
 import { useAuth } from "@/lib/hooks/useAuth";
+import Image from "next/image";
 
 interface FormData {
   email: string;
@@ -118,12 +119,10 @@ export default function LoginPage() {
         }}
       >
         <div className="p-8">
-          <div className="text-center mb-8">
+          <div className="text-center mb-2">
             {/* Replace with your logo */}
-            <div className="mb-3 flex justify-center">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-red-500 to-red-600 flex items-center justify-center">
-                <span className="text-white text-xl font-bold">RTX</span>
-              </div>
+            <div className="flex justify-center">
+              <Image src="/logo.png" alt="logo" width={200} height={100} />
             </div>
             <h1 className="text-2xl font-bold text-gray-800">Welcome Back</h1>
             <p className="text-gray-600 mt-1">Log in to your admin account</p>
