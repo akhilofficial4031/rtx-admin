@@ -72,23 +72,23 @@ const MeetingCard = ({ meeting }: { meeting: Meeting }) => (
     layout
     className="h-full"
   >
-    <Card className="h-full flex flex-col relative overflow-hidden border-none shadow-md hover:shadow-xl transition-all duration-300 group bg-gradient-to-br from-white to-red-50">
+    <Card className="h-full flex flex-col relative overflow-hidden border-none shadow-md hover:shadow-xl transition-all duration-300 group bg-white">
       {/* Decorative accent */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 to-red-400"></div>
+      {/* <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-slate-600 to-slate-400"></div> */}
 
       {/* Decorative circle */}
-      <div className="absolute -right-10 -top-10 w-32 h-32 rounded-full bg-gradient-to-br from-red-200 to-red-100 opacity-30 transform transition-transform duration-300 group-hover:scale-110"></div>
+      <div className="absolute -right-10 -top-10 w-32 h-32 rounded-full bg-gradient-to-br from-slate-200 to-slate-100 opacity-30 transform transition-transform duration-300 group-hover:scale-110"></div>
 
       <CardHeader className="pb-2 relative z-10">
         <div className="flex items-center gap-2 text-sm text-red-700 mb-2 bg-red-50 border border-red-100 px-3 py-1.5 rounded-lg w-fit shadow-sm">
           <CalendarDays size={14} className="text-red-500" />
           <span className="font-medium">{formatDate(meeting.meetingDate)}</span>
         </div>
-        <CardTitle className="text-xl font-bold tracking-tight text-gray-800 group-hover:text-red-700 transition-colors duration-200">
+        <CardTitle className="text-xl font-bold tracking-tight text-gray-800 group-hover:text-slate-700 transition-colors duration-200">
           {meeting.title}
         </CardTitle>
         <CardDescription className="flex items-center gap-1.5 text-slate-600 mt-1.5">
-          <Users size={14} className="text-red-500" />
+          <Users size={14} className="text-slate-500" />
           <span className="text-sm">
             Coordinator:{" "}
             <span className="font-medium">{meeting.coordinatorName}</span>
@@ -97,7 +97,7 @@ const MeetingCard = ({ meeting }: { meeting: Meeting }) => (
       </CardHeader>
 
       <CardContent className="text-sm flex-grow text-slate-600 relative z-10 pt-3">
-        <div className="bg-white bg-opacity-70 p-3 rounded-lg border border-red-100 backdrop-blur-sm shadow-sm">
+        <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 backdrop-blur-sm shadow-sm">
           {meeting.minutes ? (
             truncateText(meeting.minutes, 120)
           ) : (
@@ -127,7 +127,7 @@ const MeetingCard = ({ meeting }: { meeting: Meeting }) => (
         <Button
           variant="outline"
           size="sm"
-          className="ml-auto border border-red-200 bg-gradient-to-r from-white to-red-50 hover:from-red-600 hover:to-red-500 hover:text-white transition-all duration-300 group-hover:shadow-md"
+          className="ml-auto border border-slate-200 bg-white hover:bg-red-600 hover:text-white transition-all duration-300 group-hover:shadow-md"
           asChild
         >
           <Link
@@ -197,7 +197,7 @@ export default function MeetingsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
+    <div className="max-w-screen-3xl mx-auto space-y-8">
       {/* Header wrapper with background */}
       <div className="bg-white rounded-lg shadow-sm p-5 border border-slate-200">
         {/* Page header with title, view toggles, and actions */}
@@ -268,7 +268,7 @@ export default function MeetingsPage() {
       {loading ? (
         <div className="flex justify-center items-center h-80 bg-white rounded-lg border border-slate-200 shadow-sm">
           <div className="flex flex-col items-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600 mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-slate-600 mb-4"></div>
             <p className="text-slate-600">Loading meetings...</p>
           </div>
         </div>
@@ -277,7 +277,7 @@ export default function MeetingsPage() {
           {/* Table view */}
           {viewMode === "table" && (
             <div className="overflow-hidden rounded-lg border border-slate-200 shadow-md mb-8 bg-white">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 to-red-400"></div>
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-slate-600 to-slate-400"></div>
               <table className="w-full divide-y divide-slate-200">
                 <thead className="bg-gradient-to-r from-slate-50 to-white">
                   <tr>
@@ -287,7 +287,10 @@ export default function MeetingsPage() {
                     >
                       <div className="flex items-center">
                         Title
-                        <ArrowUpDown size={14} className="ml-1 text-red-500" />
+                        <ArrowUpDown
+                          size={14}
+                          className="ml-1 text-slate-500"
+                        />
                       </div>
                     </th>
                     <th
@@ -296,7 +299,10 @@ export default function MeetingsPage() {
                     >
                       <div className="flex items-center">
                         Coordinator
-                        <ArrowUpDown size={14} className="ml-1 text-red-500" />
+                        <ArrowUpDown
+                          size={14}
+                          className="ml-1 text-slate-500"
+                        />
                       </div>
                     </th>
                     <th
@@ -305,7 +311,10 @@ export default function MeetingsPage() {
                     >
                       <div className="flex items-center">
                         Date
-                        <ArrowUpDown size={14} className="ml-1 text-red-500" />
+                        <ArrowUpDown
+                          size={14}
+                          className="ml-1 text-slate-500"
+                        />
                       </div>
                     </th>
                     <th
@@ -321,10 +330,10 @@ export default function MeetingsPage() {
                     meetings.map((meeting) => (
                       <tr
                         key={meeting.id}
-                        className="hover:bg-red-50 transition-colors duration-200 group cursor-pointer"
+                        className="hover:bg-slate-50 transition-colors duration-200 group cursor-pointer"
                       >
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-slate-800 group-hover:text-red-600 transition-colors duration-200">
+                          <div className="text-sm font-medium text-slate-800 group-hover:text-slate-600 transition-colors duration-200">
                             {meeting.title}
                           </div>
                         </td>
@@ -335,7 +344,7 @@ export default function MeetingsPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-slate-600">
-                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200 shadow-sm">
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200 shadow-sm">
                               <CalendarDays size={12} className="mr-1" />
                               {formatDate(meeting.meetingDate)}
                             </span>
@@ -345,7 +354,7 @@ export default function MeetingsPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-red-600 hover:text-white hover:bg-red-600 transition-colors duration-200"
+                            className="text-slate-600 hover:text-white hover:bg-slate-600 transition-colors duration-200"
                             asChild
                           >
                             <Link
@@ -370,7 +379,7 @@ export default function MeetingsPage() {
                       >
                         <div className="flex flex-col items-center">
                           <div className="bg-white p-4 rounded-full shadow-md mb-4">
-                            <Calendar className="h-12 w-12 text-red-400" />
+                            <Calendar className="h-12 w-12 text-slate-400" />
                           </div>
                           <p className="text-lg font-medium mb-1 text-slate-700">
                             No meetings found
@@ -380,7 +389,7 @@ export default function MeetingsPage() {
                           </p>
                           <Button
                             size="sm"
-                            className="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white shadow-md transition-all duration-300 flex items-center gap-1.5 border-none"
+                            className="bg-gradient-to-r from-slate-600 to-slate-500 hover:from-slate-700 hover:to-slate-600 text-white shadow-md transition-all duration-300 flex items-center gap-1.5 border-none"
                           >
                             <Plus size={16} />
                             Create your first meeting
@@ -407,16 +416,16 @@ export default function MeetingsPage() {
                     initial="hidden"
                     animate="visible"
                     variants={cardVariants}
-                    className="col-span-full rounded-lg border-none shadow-md bg-gradient-to-br from-white to-red-50 overflow-hidden"
+                    className="col-span-full rounded-lg border-none shadow-md bg-gradient-to-br from-white to-slate-50 overflow-hidden"
                   >
                     <div className="flex flex-col items-center text-center p-10 relative">
                       {/* Decorative elements */}
-                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 to-red-400"></div>
-                      <div className="absolute -right-20 -top-20 w-40 h-40 rounded-full bg-gradient-to-br from-red-200 to-red-100 opacity-30"></div>
-                      <div className="absolute -left-20 -bottom-20 w-40 h-40 rounded-full bg-gradient-to-tr from-red-200 to-red-100 opacity-30"></div>
+                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-slate-600 to-slate-400"></div>
+                      <div className="absolute -right-20 -top-20 w-40 h-40 rounded-full bg-gradient-to-br from-slate-200 to-slate-100 opacity-30"></div>
+                      <div className="absolute -left-20 -bottom-20 w-40 h-40 rounded-full bg-gradient-to-tr from-slate-200 to-slate-100 opacity-30"></div>
 
                       <div className="bg-white p-6 rounded-full shadow-md mb-6">
-                        <Calendar className="h-16 w-16 text-red-500" />
+                        <Calendar className="h-16 w-16 text-slate-500" />
                       </div>
                       <h3 className="text-xl font-bold text-slate-800 mb-3">
                         No meetings found
@@ -427,7 +436,7 @@ export default function MeetingsPage() {
                       </p>
                       <Button
                         size="default"
-                        className="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-6 py-5 shadow-md transition-all duration-300 hover:shadow-lg flex items-center gap-2"
+                        className="bg-gradient-to-r from-slate-600 to-slate-500 hover:from-slate-700 hover:to-slate-600 text-white px-6 py-5 shadow-md transition-all duration-300 hover:shadow-lg flex items-center gap-2"
                       >
                         <Plus size={18} />
                         Create your first meeting
@@ -450,7 +459,7 @@ export default function MeetingsPage() {
                       className={
                         pagination.page <= 1
                           ? "pointer-events-none opacity-50"
-                          : "hover:bg-red-50 text-red-600"
+                          : "hover:bg-slate-50 text-slate-600"
                       }
                     />
                   </PaginationItem>
@@ -480,8 +489,8 @@ export default function MeetingsPage() {
                             onClick={() => handlePageChange(page)}
                             className={
                               page === pagination.page
-                                ? "bg-red-600 text-white hover:bg-red-700"
-                                : "hover:bg-red-50"
+                                ? "bg-slate-600 text-white hover:bg-slate-700"
+                                : "hover:bg-slate-50"
                             }
                           >
                             {page}
@@ -496,7 +505,7 @@ export default function MeetingsPage() {
                       className={
                         pagination.page >= pagination.totalPages
                           ? "pointer-events-none opacity-50"
-                          : "hover:bg-red-50 text-red-600"
+                          : "hover:bg-slate-50 text-slate-600"
                       }
                     />
                   </PaginationItem>

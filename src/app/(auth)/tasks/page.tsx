@@ -39,15 +39,18 @@ const StatusBadge = ({ status }: { status: string }) => {
   const statusConfig = {
     not_started: {
       label: "Not Started",
-      className: "bg-slate-100 text-slate-800 hover:bg-slate-200",
+      className:
+        "bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200",
     },
     in_progress: {
       label: "In Progress",
-      className: "bg-blue-100 text-blue-800 hover:bg-blue-200",
+      className:
+        "bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200",
     },
     completed: {
       label: "Completed",
-      className: "bg-green-100 text-green-800 hover:bg-green-200",
+      className:
+        "bg-green-50 text-green-700 hover:bg-green-100 border border-green-200",
     },
   };
 
@@ -92,7 +95,7 @@ const StatusChangeMenu = ({
               onClick={() => onStatusChange(task.id, "in_progress")}
             >
               <div className="flex items-center">
-                <span className="bg-blue-100 p-1 rounded mr-2">
+                <span className="bg-blue-50 p-1 rounded mr-2">
                   <Clock size={16} className="text-blue-600" />
                 </span>
                 Mark as In Progress
@@ -102,7 +105,7 @@ const StatusChangeMenu = ({
               onClick={() => onStatusChange(task.id, "completed")}
             >
               <div className="flex items-center">
-                <span className="bg-green-100 p-1 rounded mr-2">
+                <span className="bg-green-50 p-1 rounded mr-2">
                   <Check size={16} className="text-green-600" />
                 </span>
                 Mark as Completed
@@ -116,7 +119,7 @@ const StatusChangeMenu = ({
             onClick={() => onStatusChange(task.id, "completed")}
           >
             <div className="flex items-center">
-              <span className="bg-green-100 p-1 rounded mr-2">
+              <span className="bg-green-50 p-1 rounded mr-2">
                 <Check size={16} className="text-green-600" />
               </span>
               Mark as Completed
@@ -160,10 +163,10 @@ const TasksEmptyState = () => (
   <tr>
     <td
       colSpan={5}
-      className="px-6 py-16 text-center text-slate-500 bg-slate-50/50"
+      className="px-6 py-16 text-center text-slate-500 bg-slate-50/30"
     >
       <div className="flex flex-col items-center">
-        <div className="bg-white p-4 rounded-full shadow-md mb-4">
+        <div className="bg-slate-50 p-4 rounded-full border border-slate-200 mb-4">
           <Clock className="h-12 w-12 text-slate-400" />
         </div>
         <p className="text-lg font-medium mb-1 text-slate-700">No tasks due</p>
@@ -315,8 +318,8 @@ export default function TasksPage() {
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="text-sm text-slate-600">
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200 shadow-sm">
-            <CalendarDays size={12} className="mr-1" />
+          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-slate-50 text-slate-700 border border-slate-200">
+            <CalendarDays size={12} className="mr-1 text-slate-500" />
             {task.dueDate ? formatDate(task.dueDate) : "No due date"}
           </span>
         </div>
@@ -340,7 +343,7 @@ export default function TasksPage() {
   );
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
+    <div className="max-w-screen-3xl mx-auto space-y-8">
       {/* Header wrapper with background */}
       <div className="bg-white rounded-lg shadow-sm p-5 border border-slate-200">
         {/* Page header with title */}
@@ -385,7 +388,7 @@ export default function TasksPage() {
                 <TabsTrigger value="today">
                   Today
                   {getTabCount("today") > 0 && (
-                    <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-red-100 text-red-800 rounded-full">
+                    <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-slate-200 text-slate-700 rounded-md">
                       {getTabCount("today")}
                     </span>
                   )}
@@ -393,7 +396,7 @@ export default function TasksPage() {
                 <TabsTrigger value="day1">
                   1 Day
                   {getTabCount("day1") > 0 && (
-                    <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-orange-100 text-orange-800 rounded-full">
+                    <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-slate-200 text-slate-700 rounded-md">
                       {getTabCount("day1")}
                     </span>
                   )}
@@ -401,7 +404,7 @@ export default function TasksPage() {
                 <TabsTrigger value="day2">
                   2 Days
                   {getTabCount("day2") > 0 && (
-                    <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full">
+                    <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-slate-200 text-slate-700 rounded-md">
                       {getTabCount("day2")}
                     </span>
                   )}
@@ -409,7 +412,7 @@ export default function TasksPage() {
                 <TabsTrigger value="day3">
                   3 Days
                   {getTabCount("day3") > 0 && (
-                    <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-green-100 text-green-800 rounded-full">
+                    <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-slate-200 text-slate-700 rounded-md">
                       {getTabCount("day3")}
                     </span>
                   )}

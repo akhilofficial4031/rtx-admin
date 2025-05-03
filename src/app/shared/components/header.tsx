@@ -164,7 +164,7 @@ export default function Header({ isSidebarOpen, toggleSidebar }: HeaderProps) {
             aria-expanded={isProfileDropdownOpen}
             aria-haspopup="true"
           >
-            <span className="mr-2 text-sm text-gray-700 hidden md:block">
+            <span className="mr-2 text-sm text-gray-700 hidden md:block capitalize">
               {user?.name || "User"}
             </span>
             <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600">
